@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NiyoTaskManager.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,12 +19,18 @@ namespace NiyoTaskManager.Data
         }
 
         public DbSet<NiyoUser> Users { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<NiyoTask> Tasks { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
-            // Configure entity properties and relationships here
+            base.OnModelCreating(builder);
+            builder.Entity<NiyoUser>().ToTable("Users").Property(p=>p.Id).HasColumnName("id");
+            builder.Entity<IdentityUserRole<string>>().ToTable("UserRole");
+            builder.Entity<IdentityUserLogin<string>>().ToTable("Login");
+            builder.Entity<IdentityRole>().ToTable("Role").Property(p => p.Id).HasColumnName("Id");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaim");
+
+            builder.Entity<NiyoTask>().HasKey(t => t.Id);
         }
     }
 

@@ -12,10 +12,10 @@ namespace NiyoTaskManager.Data.Entities
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Username { get; set; }
-        public string? Location { get; set; }
 
         public string? Country { get; set; }
         public string? ProfileImage { get; set; }
+        public bool IsDeleted { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
         public DateTime DateDeleted { get; set; }
