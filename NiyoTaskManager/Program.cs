@@ -1,5 +1,9 @@
 
-namespace NiyoTaskManager
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using NiyoTaskManager.Data;
+
+namespace NiyoTaskManager.API
 {
     public class Program
     {
@@ -14,6 +18,13 @@ namespace NiyoTaskManager
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //Database configuration
+            builder.Services.AddDbContext<NiyoDbContext>(options =>
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.ConfigureJWT(builder.Configuration);
+            builder.Services.AddAuthorization();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -25,6 +36,7 @@ namespace NiyoTaskManager
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
