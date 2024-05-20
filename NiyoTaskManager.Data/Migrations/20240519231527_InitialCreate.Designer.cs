@@ -12,7 +12,7 @@ using NiyoTaskManager.Data;
 namespace NiyoTaskManager.Data.Migrations
 {
     [DbContext(typeof(NiyoDbContext))]
-    [Migration("20240519224830_InitialCreate")]
+    [Migration("20240519231527_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -283,9 +283,6 @@ namespace NiyoTaskManager.Data.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

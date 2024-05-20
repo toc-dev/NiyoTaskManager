@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NiyoTaskManager.Core.Implementations
 {
-    internal class TaskService : ITaskService
+    public class TaskService : ITaskService
     {
         public Task<TaskBindingDTO> CreateTaskAsync(NewTaskDTO model)
         {

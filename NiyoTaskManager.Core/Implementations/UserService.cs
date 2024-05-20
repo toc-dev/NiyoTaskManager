@@ -23,9 +23,9 @@ namespace NiyoTaskManager.Core.Implementations
         private readonly UserManager<NiyoUser> _userManager;
         private readonly SignInManager<NiyoUser> _signInManager;
         private readonly IConfiguration _configuration;
-        private readonly ILogger _logger;
+        private readonly ILogger<UserService> _logger;
         private readonly NiyoDbContext _context;
-        public UserService(UserManager<NiyoUser> userManager, IConfiguration configuration, ILogger logger, NiyoDbContext context, SignInManager<NiyoUser> signInManager)
+        public UserService(UserManager<NiyoUser> userManager, IConfiguration configuration, ILogger<UserService> logger, NiyoDbContext context, SignInManager<NiyoUser> signInManager)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -116,7 +116,7 @@ namespace NiyoTaskManager.Core.Implementations
                     if (signInResult.Succeeded)
                     {
                         _logger.LogWarning($"Sign-in failed for: [{model.Email}] User account has not been confirmed");
-                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWTSettings")["SecurityKey"]));
+                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWTSettings")["Key"]));
                         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                         var tokeOptions = new JwtSecurityToken(
                             issuer: _configuration.GetSection("JWTSettings")["Issuer"],

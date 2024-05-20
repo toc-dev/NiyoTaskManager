@@ -28,7 +28,7 @@ namespace NiyoTaskManager.API
         }
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
-            var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
+            var key = Encoding.ASCII.GetBytes(configuration["JWTSettings:Key"]);
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -56,7 +56,7 @@ namespace NiyoTaskManager.API
 
         }
         
-        public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureIdentity(this IServiceCollection services)
         {
             services.AddIdentityCore<NiyoUser>(options =>
             {
@@ -73,5 +73,6 @@ namespace NiyoTaskManager.API
 
 
         }
+        
     }
 }

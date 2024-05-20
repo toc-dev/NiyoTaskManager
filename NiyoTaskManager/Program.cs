@@ -1,6 +1,8 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using NiyoTaskManager.Core.Implementations;
+using NiyoTaskManager.Core.Interfaces;
 using NiyoTaskManager.Data;
 
 namespace NiyoTaskManager.API
@@ -12,8 +14,17 @@ namespace NiyoTaskManager.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.ConfigureIdentity();
+            builder.Services.ConfigureCors();
+            builder.Services.AddMvc();
             builder.Services.AddControllers();
+
+            #region ApplicationServices
+            builder.Services.AddLogging();
+            builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<ITaskService, TaskService>();
+            
+            #endregion
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
