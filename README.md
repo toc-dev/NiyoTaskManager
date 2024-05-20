@@ -35,10 +35,10 @@ This is a .NET 8 application that leverages SQL Server DB to store and retrieve 
       "ConnectionStrings": {
         "DefaultConnection": "Add your Connection Strings here",
       }
-    `JWTSettings`: {
-        `Key`: `Y0UR-JWT-K3Y`,
-        `Issuer`: `YOUR|ISSUER\URL`,
-        `Audience`: `YOUR|USERS`
+    "JWTSettings": {
+        "Key": "Y0UR-JWT-K3Y",
+        "Issuer": "YOUR|ISSUER\URL",
+        "Audience": "YOUR|USERS"
     }
     ```
 
