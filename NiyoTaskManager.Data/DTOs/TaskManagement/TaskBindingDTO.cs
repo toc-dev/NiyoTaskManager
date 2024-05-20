@@ -1,4 +1,5 @@
-﻿using NiyoTaskManager.Data.Entities;
+﻿using NiyoTaskManager.Data.DTOs.Auth;
+using NiyoTaskManager.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace NiyoTaskManager.Data.DTOs.TaskManagement
         public string? Title { get; set; }
         public string? Description { get; set; }
         public bool IsCompleted { get; set; }
-        public NiyoUser? User { get; set; }
+        public UserBindingDTO? User { get; set; }
     }
 }

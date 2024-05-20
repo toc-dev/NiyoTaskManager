@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NiyoTaskManager.Core.Interfaces;
+using NiyoTaskManager.Core.Utilities;
 using NiyoTaskManager.Data;
 using NiyoTaskManager.Data.DTOs.Auth;
 using NiyoTaskManager.Data.Entities;
@@ -25,13 +26,15 @@ namespace NiyoTaskManager.Core.Implementations
         private readonly IConfiguration _configuration;
         private readonly ILogger<UserService> _logger;
         private readonly NiyoDbContext _context;
-        public UserService(UserManager<NiyoUser> userManager, IConfiguration configuration, ILogger<UserService> logger, NiyoDbContext context, SignInManager<NiyoUser> signInManager)
+        private readonly MappingService _mappingService;
+        public UserService(UserManager<NiyoUser> userManager, IConfiguration configuration, ILogger<UserService> logger, NiyoDbContext context, SignInManager<NiyoUser> signInManager, MappingService mappingService)
         {
             _userManager = userManager;
             _configuration = configuration;
             _logger = logger;
             _context = context;
             _signInManager = signInManager;
+            _mappingService = mappingService;
         }
         public async Task<SignInResultDTO> SignUpAsync(SignUpDTO model)
         {
@@ -135,7 +138,7 @@ namespace NiyoTaskManager.Core.Implementations
                         {
                             Token = tokenString,
                             Expiry = tokeOptions.ValidTo,
-                            User = MapUserToModel(user)
+                            User = _mappingService.MapUserToModel(user)
                         };
                     }
                 }
@@ -162,7 +165,7 @@ namespace NiyoTaskManager.Core.Implementations
                         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
 
                         _logger.LogInformation("Token generation successful.");
-                        var userViewModel = MapUserToModel(user);
+                        var userViewModel = _mappingService.MapUserToModel(user);
                         return new SignInResultDTO()
                         {
                             Token = tokenString,
@@ -218,7 +221,7 @@ namespace NiyoTaskManager.Core.Implementations
                 var users = await _context.Users.Where(x=>x.IsDeleted==false).ToListAsync();
                 foreach (var user in users)
                 {
-                    var eachUser = MapUserToModel(user);
+                    var eachUser = _mappingService.MapUserToModel(user);
                     userList.Add(eachUser);
                 }
                 return userList;
@@ -238,7 +241,7 @@ namespace NiyoTaskManager.Core.Implementations
                 if(user != null)
                 {
                     _logger.LogWarning($"The user with the email {email} does not exist");
-                    return MapUserToModel(user);
+                    return _mappingService.MapUserToModel(user);
                 }
                 else
                 {
@@ -248,27 +251,6 @@ namespace NiyoTaskManager.Core.Implementations
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occured during the account retrieval process {ex.Message}");
-                return null;
-            }
-        }
-        private UserBindingDTO MapUserToModel(NiyoUser user)
-        {
-            try
-            {
-                return new UserBindingDTO()
-                {
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    PhoneNumber = user.PhoneNumber,
-                    UserName = user.Email,
-                    Country = user.Country,
-                    ProfileImage = user.ProfileImage,
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An Error has occured");
                 return null;
             }
         }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using NiyoTaskManager.Core.Implementations;
 using NiyoTaskManager.Core.Interfaces;
+using NiyoTaskManager.Core.Utilities;
 using NiyoTaskManager.Data;
 
 namespace NiyoTaskManager.API
@@ -23,6 +24,7 @@ namespace NiyoTaskManager.API
             builder.Services.AddLogging();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<ITaskService, TaskService>();
+            builder.Services.AddTransient<MappingService>();
             
             #endregion
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

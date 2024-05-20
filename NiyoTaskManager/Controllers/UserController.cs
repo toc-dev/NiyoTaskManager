@@ -65,6 +65,39 @@ namespace NiyoTaskManager.API.Controllers
                 return BadRequest(new NiyoAPICustomResponseSchema(new List<string>() { ex.Message }));
             }
         }
+        [AllowAnonymous]
+        [HttpPost("account/allusers")]
+        [ProducesResponseType(200, Type = typeof(SignInResultDTO))]
+        [ProducesResponseType(400, Type = typeof(List<string>))]
+        public async Task<IActionResult> FetchAllUsers()
+        {
+            try
+            {
+                var response = await _userService.FetchAllUsers();
+                return Ok(new NiyoAPICustomResponseSchema("Users successfully fetched", response));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new NiyoAPICustomResponseSchema(new List<string>() { ex.Message }));
+            }
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("account/user")]
+        [ProducesResponseType(200, Type = typeof(SignInResultDTO))]
+        [ProducesResponseType(400, Type = typeof(List<string>))]
+        public async Task<IActionResult> FetchUser(string id)
+        {
+            try
+            {
+                var response = await _userService.FetchUserAsync(id);
+                return Ok(new NiyoAPICustomResponseSchema("User successfully fetched", response));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new NiyoAPICustomResponseSchema(new List<string>() { ex.Message }));
+            }
+        }
 
     }
 }

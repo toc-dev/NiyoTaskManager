@@ -12,7 +12,7 @@ namespace NiyoTaskManager.Core.Interfaces
         Task<List<TaskBindingDTO>> FetchAllTasksAsync();
         Task<TaskBindingDTO> FetchTaskAsync(string id);
         Task<TaskBindingDTO> CreateTaskAsync(NewTaskDTO model);
-        Task UpdateTaskAsync(TaskUpdateDTO model);
+        Task<TaskBindingDTO> UpdateTaskAsync(TaskUpdateDTO model);
         Task DeleteTaskAsync(string id);
     }
 }
