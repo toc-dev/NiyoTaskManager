@@ -37,7 +37,7 @@ This is a .NET 8 application that leverages SQL Server DB to store and retrieve 
       }
     "JWTSettings": {
         "Key": "Y0UR-JWT-K3Y",
-        "Issuer": "YOUR|ISSUER\URL",
+        "Issuer": "YOUR|ISSUER|URL",
         "Audience": "YOUR|USERS"
     }
     ```
