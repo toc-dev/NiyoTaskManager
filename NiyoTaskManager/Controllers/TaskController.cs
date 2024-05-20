@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NiyoTaskManager.Core.Implementations;
 using NiyoTaskManager.Core.Interfaces;
 using NiyoTaskManager.Core.Utilities;
@@ -13,10 +14,12 @@ namespace NiyoTaskManager.API.Controllers
     public class TaskController : ControllerBase
     {
         private readonly ITaskService _taskService;
+        private readonly IHubContext<TaskHub> _hubContext;
 
-        public TaskController(ITaskService taskService)
+        public TaskController(ITaskService taskService, IHubContext<TaskHub> hubContext)
         {
             _taskService = taskService;
+            _hubContext = hubContext;
         }
         [AllowAnonymous]
         [HttpPost("task/create")]
@@ -29,6 +32,7 @@ namespace NiyoTaskManager.API.Controllers
                 if(ModelState.IsValid)
                 {
                     var response = await _taskService.CreateTaskAsync(model);
+                    await _hubContext.Clients.All.SendAsync("ReceiveTaskUpdate", $"A new task with name: \"{model.Title}\" has been created");
                     return Ok(new NiyoAPICustomResponseSchema("Task Creation Successful", response));
                 }
                 else
@@ -98,6 +102,7 @@ namespace NiyoTaskManager.API.Controllers
                 if (ModelState.IsValid)
                 {
                     await _taskService.DeleteTaskAsync(id);
+                    await _hubContext.Clients.All.SendAsync("ReceiveTaskUpdate", $"The task: \"{id}\" has been deleted");
                     return Ok(new NiyoAPICustomResponseSchema("Task deletion Successful"));
                 }
                 else
@@ -121,6 +126,7 @@ namespace NiyoTaskManager.API.Controllers
                 if (ModelState.IsValid)
                 {
                     var response = await _taskService.UpdateTaskAsync(model);
+                    await _hubContext.Clients.All.SendAsync("ReceiveTaskUpdate", $"The task: \"{model.Title}\" has been updated");
                     return Ok(new NiyoAPICustomResponseSchema("Task Update Successful", response));
                 }
                 else

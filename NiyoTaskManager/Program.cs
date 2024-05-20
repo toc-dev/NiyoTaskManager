@@ -29,6 +29,7 @@ namespace NiyoTaskManager.API
             #endregion
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSignalR();
             builder.Services.AddSwaggerGen();
 
             //Database configuration
@@ -54,6 +55,8 @@ namespace NiyoTaskManager.API
 
 
             app.MapControllers();
+            app.MapHub<TaskHub>("/taskHub");
+
 
             app.Run();
         }

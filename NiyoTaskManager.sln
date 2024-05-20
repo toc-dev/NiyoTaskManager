@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiyoTaskManager.Data", "Niy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiyoTaskManager.Tests", "NiyoTaskManager.Tests\NiyoTaskManager.Tests.csproj", "{D777DAD4-9616-4B41-9037-45CE9F1A53C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiyoTaskManager.ConsoleApp", "NiyoTaskManager.Console\NiyoTaskManager.ConsoleApp.csproj", "{29CB29DB-6445-49FC-AC5A-6ED1F78BA60E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{D777DAD4-9616-4B41-9037-45CE9F1A53C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D777DAD4-9616-4B41-9037-45CE9F1A53C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D777DAD4-9616-4B41-9037-45CE9F1A53C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29CB29DB-6445-49FC-AC5A-6ED1F78BA60E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29CB29DB-6445-49FC-AC5A-6ED1F78BA60E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29CB29DB-6445-49FC-AC5A-6ED1F78BA60E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29CB29DB-6445-49FC-AC5A-6ED1F78BA60E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
