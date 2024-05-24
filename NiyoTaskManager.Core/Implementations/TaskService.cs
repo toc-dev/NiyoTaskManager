@@ -46,6 +46,7 @@ namespace NiyoTaskManager.Core.Implementations
                         Title = model.Title,
                         Description = model.Description,
                         User = user,
+                        DateCreated = DateTime.Now,
                     };
                     await _context.Tasks.AddAsync(newTask);
                     await _context.SaveChangesAsync();
@@ -65,6 +66,31 @@ namespace NiyoTaskManager.Core.Implementations
             }
         }
 
+        public async Task<TaskBindingDTO> UpdateTaskAsync(TaskUpdateDTO model)
+        {
+            try
+            {
+                var task = await _context.Tasks.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == model.Id && x.IsDeleted == false);
+                if (task != null)
+                {
+                    task.Title = model.Title;
+                    task.Description = model.Description;
+                    task.IsCompleted = model.IsCompleted;
+                    task.DateUpdated = DateTime.Now;
+                    return _mappingService.MapTasks(task);
+                }
+                else
+                {
+                    _logger.LogWarning($"This task does not exist");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occured during the account retrieval process {ex.Message}");
+                return null;
+            }
+        }
         public async Task DeleteTaskAsync(string id)
         {
             try
@@ -115,32 +141,6 @@ namespace NiyoTaskManager.Core.Implementations
                 var task = await _context.Tasks.Include(x=>x.User).FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false);
                 if (task != null)
                 {    
-                    return _mappingService.MapTasks(task);
-                }
-                else
-                {
-                    _logger.LogWarning($"This task does not exist");
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An error occured during the account retrieval process {ex.Message}");
-                return null;
-            }
-        }
-
-        public async Task<TaskBindingDTO> UpdateTaskAsync(TaskUpdateDTO model)
-        {
-            try
-            {
-                var task = await _context.Tasks.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == model.Id && x.IsDeleted == false);
-                if (task != null)
-                {
-                    task.Title = model.Title;
-                    task.Description = model.Description;
-                    task.IsCompleted = model.IsCompleted;
-                    task.DateUpdated = DateTime.Now;
                     return _mappingService.MapTasks(task);
                 }
                 else

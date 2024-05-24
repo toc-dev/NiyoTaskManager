@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -93,7 +94,7 @@ namespace NiyoTaskManager.Core.Implementations
             try
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == model.Email);
-
+               
                 if (user != null && user.IsDeleted == true)
                 {
                     _logger.LogWarning($"Password sign-in failed for: [{model.Email}] User account closed or deleted");
@@ -115,29 +116,53 @@ namespace NiyoTaskManager.Core.Implementations
                 }
                 if (user != null && !user.EmailConfirmed)
                 {
+
                     var signInResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
                     if (signInResult.Succeeded)
                     {
                         _logger.LogWarning($"Sign-in failed for: [{model.Email}] User account has not been confirmed");
-                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWTSettings")["Key"]));
-                        var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                        var secretKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration.GetSection("JWTSettings")["Key"]));
+
+
+
+
+                        var now = DateTime.UtcNow;
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var tokeOptions = new SecurityTokenDescriptor
+                        {
+                            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, user.Id) }),
+                            Expires = now.AddMonths(3), // Set the token to expire in 30 minutes
+                            NotBefore = now,
+                            Issuer = _configuration.GetSection("JWTSettings")["Issuer"],
+                            Audience = _configuration.GetSection("JWTSettings")["Audience"],
+                            SigningCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature)
+                        };
+
+                        var token = tokenHandler.CreateToken(tokeOptions);
+                        var tokenString = tokenHandler.WriteToken(token);
+
+
+
+
+                        
+                        /*var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                         var tokeOptions = new JwtSecurityToken(
                             issuer: _configuration.GetSection("JWTSettings")["Issuer"],
                             audience: _configuration.GetSection("JWTSettings")["Audience"],
                             claims: new List<Claim>()
                             {
                                 new Claim(ClaimTypes.Name, user.Id),
-                                new Claim(ClaimTypes.Role, "user"),
                             },
-                            expires: DateTime.Now.AddMonths(3),
+                            notBefore: DateTime.Now,
+                            expires: DateTime.Now.AddDays(3),
                             signingCredentials: signinCredentials
-                        );
+                        );*/
 
-                        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                        //var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
                         return new SignInResultDTO()
                         {
                             Token = tokenString,
-                            Expiry = tokeOptions.ValidTo,
+                            Expiry = tokeOptions.Expires,
                             User = _mappingService.MapUserToModel(user)
                         };
                     }
@@ -148,21 +173,41 @@ namespace NiyoTaskManager.Core.Implementations
                     if (_signInResult.Succeeded)
                     {
                         _logger.LogInformation("Password sign-in successful. About to generate authetication token");
-                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWTSettings")["SecurityKey"]));
-                        var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWTSettings")["Key"]));
+
+
+
+
+                        var now = DateTime.UtcNow;
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var tokeOptions = new SecurityTokenDescriptor
+                        {
+                            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, user.Id) }),
+                            Expires = now.AddMonths(3), // Set the token to expire in 30 minutes
+                            NotBefore = now,
+                            Issuer = _configuration.GetSection("JWTSettings")["Issuer"],
+                            Audience = _configuration.GetSection("JWTSettings")["Audience"],
+                            SigningCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature)
+                        };
+
+                        var token = tokenHandler.CreateToken(tokeOptions);
+                        var tokenString = tokenHandler.WriteToken(token);
+
+
+
+                       /* var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                         var tokeOptions = new JwtSecurityToken(
                             issuer: _configuration.GetSection("JWTSettings")["Issuer"],
                             audience: _configuration.GetSection("JWTSettings")["Audience"],
-                            claims: new List<Claim>()
-                        {
-                            new Claim(ClaimTypes.Name, user.Id),
-                            new Claim(ClaimTypes.Role, "user"),
-                        },
-                            expires: DateTime.Now.AddMonths(3),
+                            claims: new List<System.Security.Claims.Claim>()
+                            {
+                                new  System.Security.Claims.Claim(ClaimTypes.Name, user.Id),
+                            },
+                            expires: DateTime.Now.AddDays(3),
                             signingCredentials: signinCredentials
-                        );
+                        );*/
 
-                        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                        //var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
 
                         _logger.LogInformation("Token generation successful.");
                         var userViewModel = _mappingService.MapUserToModel(user);
@@ -170,7 +215,7 @@ namespace NiyoTaskManager.Core.Implementations
                         {
                             Token = tokenString,
                             User = userViewModel,
-                            Expiry = tokeOptions.ValidTo
+                            Expiry = tokeOptions.Expires
                         };
                     }
                     else if (_signInResult.IsLockedOut)

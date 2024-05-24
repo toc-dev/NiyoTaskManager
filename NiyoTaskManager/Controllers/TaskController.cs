@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -11,19 +12,17 @@ using NiyoTaskManager.Data.Entities;
 
 namespace NiyoTaskManager.API.Controllers
 {
-    public class TaskController : ControllerBase
+    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [ApiController]
+    public class TaskController(ITaskService taskService, IHubContext<TaskHub> hubContext) : ControllerBase
     {
-        private readonly ITaskService _taskService;
-        private readonly IHubContext<TaskHub> _hubContext;
+        private readonly ITaskService _taskService = taskService;
+        private readonly IHubContext<TaskHub> _hubContext = hubContext;
 
-        public TaskController(ITaskService taskService, IHubContext<TaskHub> hubContext)
-        {
-            _taskService = taskService;
-            _hubContext = hubContext;
-        }
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("task/create")]
-        [ProducesResponseType(200, Type = typeof(SignInResultDTO))]
+        [ProducesResponseType(200, Type = typeof(TaskBindingDTO))]
         [ProducesResponseType(400, Type = typeof(List<string>))]
         public async Task<IActionResult> CreatNewTask([FromBody] NewTaskDTO model)
         {
@@ -47,7 +46,7 @@ namespace NiyoTaskManager.API.Controllers
         }
         [AllowAnonymous]
         [HttpGet("task/fetch/{id}")]
-        [ProducesResponseType(200, Type = typeof(SignInResultDTO))]
+        [ProducesResponseType(200, Type = typeof(TaskBindingDTO))]
         [ProducesResponseType(400, Type = typeof(List<string>))]
         public async Task<IActionResult> FetchTask([FromRoute] string id)
         {
@@ -70,7 +69,7 @@ namespace NiyoTaskManager.API.Controllers
         }
         [AllowAnonymous]
         [HttpGet("task/fetchall")]
-        [ProducesResponseType(200, Type = typeof(SignInResultDTO))]
+        [ProducesResponseType(200, Type = typeof(List<TaskBindingDTO>))]
         [ProducesResponseType(400, Type = typeof(List<string>))]
         public async Task<IActionResult> FetchAllTasks()
         {
@@ -93,7 +92,7 @@ namespace NiyoTaskManager.API.Controllers
         }
         [AllowAnonymous]
         [HttpPost("task/delete/{id}")]
-        [ProducesResponseType(200, Type = typeof(SignInResultDTO))]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400, Type = typeof(List<string>))]
         public async Task<IActionResult> DeleteTask([FromRoute] string id)
         {
@@ -117,7 +116,7 @@ namespace NiyoTaskManager.API.Controllers
         }
         [AllowAnonymous]
         [HttpPost("task/update")]
-        [ProducesResponseType(200, Type = typeof(SignInResultDTO))]
+        [ProducesResponseType(200, Type = typeof(TaskBindingDTO))]
         [ProducesResponseType(400, Type = typeof(List<string>))]
         public async Task<IActionResult> UpdateTask([FromBody] TaskUpdateDTO model)
         {
