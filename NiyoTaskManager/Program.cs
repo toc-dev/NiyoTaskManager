@@ -83,7 +83,7 @@ namespace NiyoTaskManager.API
             builder.Services.AddLogging();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<ITaskService, TaskService>();
-            builder.Services.AddTransient<MappingService>();
+            builder.Services.AddTransient<IMappingService, MappingService>();
             builder.Services.AddHttpClient();
 
             #endregion

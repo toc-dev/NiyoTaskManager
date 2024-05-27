@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NiyoTaskManager.Core.Implementations;
+using NiyoTaskManager.Core.Interfaces;
 using NiyoTaskManager.Data;
 using NiyoTaskManager.Data.DTOs.Auth;
 using NiyoTaskManager.Data.DTOs.TaskManagement;
@@ -14,17 +15,19 @@ using System.Threading.Tasks;
 
 namespace NiyoTaskManager.Core.Utilities
 {
-    public class MappingService
+    public class MappingService : IMappingService
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger<TaskService> _logger;
+        private readonly ILogger<MappingService> _logger;
         private readonly NiyoDbContext _context;
-        public MappingService(IConfiguration configuration, ILogger<TaskService> logger, NiyoDbContext context)
+
+        public MappingService(IConfiguration configuration, ILogger<MappingService> logger, NiyoDbContext context)
         {
             _configuration = configuration;
             _logger = logger;
             _context = context;
         }
+
         public UserBindingDTO MapUserToModel(NiyoUser user)
         {
             try
@@ -42,10 +45,11 @@ namespace NiyoTaskManager.Core.Utilities
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An Error has occured");
+                _logger.LogError(ex, "An Error has occurred");
                 return null;
             }
         }
+
         public TaskBindingDTO MapTasks(NiyoTask task)
         {
             try
@@ -60,9 +64,10 @@ namespace NiyoTaskManager.Core.Utilities
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An Error has occured");
+                _logger.LogError(ex, "An Error has occurred");
                 return null;
             }
         }
     }
+
 }

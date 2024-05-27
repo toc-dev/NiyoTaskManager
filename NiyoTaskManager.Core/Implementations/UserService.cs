@@ -27,8 +27,8 @@ namespace NiyoTaskManager.Core.Implementations
         private readonly IConfiguration _configuration;
         private readonly ILogger<UserService> _logger;
         private readonly NiyoDbContext _context;
-        private readonly MappingService _mappingService;
-        public UserService(UserManager<NiyoUser> userManager, IConfiguration configuration, ILogger<UserService> logger, NiyoDbContext context, SignInManager<NiyoUser> signInManager, MappingService mappingService)
+        private readonly IMappingService _mappingService;
+        public UserService(UserManager<NiyoUser> userManager, IConfiguration configuration, ILogger<UserService> logger, NiyoDbContext context, SignInManager<NiyoUser> signInManager, IMappingService mappingService)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -141,24 +141,6 @@ namespace NiyoTaskManager.Core.Implementations
                         var token = tokenHandler.CreateToken(tokeOptions);
                         var tokenString = tokenHandler.WriteToken(token);
 
-
-
-
-                        
-                        /*var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                        var tokeOptions = new JwtSecurityToken(
-                            issuer: _configuration.GetSection("JWTSettings")["Issuer"],
-                            audience: _configuration.GetSection("JWTSettings")["Audience"],
-                            claims: new List<Claim>()
-                            {
-                                new Claim(ClaimTypes.Name, user.Id),
-                            },
-                            notBefore: DateTime.Now,
-                            expires: DateTime.Now.AddDays(3),
-                            signingCredentials: signinCredentials
-                        );*/
-
-                        //var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
                         return new SignInResultDTO()
                         {
                             Token = tokenString,
@@ -193,21 +175,6 @@ namespace NiyoTaskManager.Core.Implementations
                         var token = tokenHandler.CreateToken(tokeOptions);
                         var tokenString = tokenHandler.WriteToken(token);
 
-
-
-                       /* var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                        var tokeOptions = new JwtSecurityToken(
-                            issuer: _configuration.GetSection("JWTSettings")["Issuer"],
-                            audience: _configuration.GetSection("JWTSettings")["Audience"],
-                            claims: new List<System.Security.Claims.Claim>()
-                            {
-                                new  System.Security.Claims.Claim(ClaimTypes.Name, user.Id),
-                            },
-                            expires: DateTime.Now.AddDays(3),
-                            signingCredentials: signinCredentials
-                        );*/
-
-                        //var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
 
                         _logger.LogInformation("Token generation successful.");
                         var userViewModel = _mappingService.MapUserToModel(user);
@@ -250,7 +217,10 @@ namespace NiyoTaskManager.Core.Implementations
                 if (user != null)
                 {
                     user.IsDeleted = true;
+                    _context.Update(user);
+                    await _context.SaveChangesAsync();
                 }
+                
             }
             catch(Exception ex)
             {
