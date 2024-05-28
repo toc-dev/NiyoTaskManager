@@ -18,19 +18,15 @@ namespace NiyoTaskManager.Core.Implementations
 {
     public class TaskService : ITaskService
     {
-        private readonly UserManager<NiyoUser> _userManager;
-        private readonly SignInManager<NiyoUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ILogger<TaskService> _logger;
         private readonly NiyoDbContext _context;
-        private readonly MappingService _mappingService;
-        public TaskService(UserManager<NiyoUser> userManager, IConfiguration configuration, ILogger<TaskService> logger, NiyoDbContext context, SignInManager<NiyoUser> signInManager, MappingService mappingService)
+        private readonly IMappingService _mappingService;
+        public TaskService(IConfiguration configuration, ILogger<TaskService> logger, NiyoDbContext context, IMappingService mappingService)
         {
-            _userManager = userManager;
             _configuration = configuration;
             _logger = logger;
             _context = context;
-            _signInManager = signInManager;
             _mappingService = mappingService;
         }
         public async Task<TaskBindingDTO> CreateTaskAsync(NewTaskDTO model)
