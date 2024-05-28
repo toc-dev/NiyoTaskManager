@@ -25,7 +25,7 @@ namespace NiyoTaskManager.Tests
         private readonly Mock<ILogger<TaskService>> _loggerMock;
         private readonly NiyoDbContext _context;
         private readonly Mock<IMappingService> _mappingServiceMock;
-        private readonly TaskService _taskService;
+        private readonly ITaskService _taskService;
 
         public TaskServiceTests()
         {
